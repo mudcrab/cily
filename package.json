@@ -20,8 +20,10 @@
     "bookshelf": "^0.7.9",
     "express": "^4.10.2",
     "knex": "^0.7.3",
+    "lodash": "^2.4.1",
     "minivents": "^1.1.6",
     "moment-timezone": "^0.2.4",
+    "mysql": "^2.5.3",
     "ws": "^0.4.32"
   },
   "devDependencies": {
