@@ -1,0 +1,33 @@
+{
+  "name": "redoit",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mudcrab/redoit.git"
+  },
+  "author": "Jevgeni",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mudcrab/redoit/issues"
+  },
+  "homepage": "https://github.com/mudcrab/redoit",
+  "dependencies": {
+    "bookshelf": "^0.7.9",
+    "express": "^4.10.2",
+    "knex": "^0.7.3",
+    "minivents": "^1.1.6",
+    "moment-timezone": "^0.2.4",
+    "ws": "^0.4.32"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-jshint": "^1.9.0",
+    "gulp-watch": "^1.1.0",
+    "jshint-stylish": "^1.0.0"
+  }
+}
