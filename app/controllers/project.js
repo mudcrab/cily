@@ -1,3 +1,6 @@
+var db = require('../db.js');
+var _ = require('lodash');
+
 exports.view = {
 
 	path: '/:id',
@@ -5,28 +8,86 @@ exports.view = {
 
 	handler: function(req, res)
 	{
-		return res.json({ lol: false });
+		var retData = {
+			status: false
+		};
+
+		db.models.Projects.forge({
+			id: req.params.id
+		})
+			.fetch().then(function(data) {
+				if(data) retData = {
+					status: true,
+					data: data.toJSON()
+				};
+
+				return res.json(retData);
+			});
 	}
 };
 
 exports.save = {
 
 	path: '/:id/save',
-	method: 'post|patch',
+	method: 'post|patch|get',
 
 	handler: function(req, res)
 	{
-		return res.json({});
+		var retData = {
+			status: false
+		};
+
+		var modelData = _.merge(req.query, req.params);
+
+		db.models.Projects.forge(modelData)
+			.save()
+			.then(function(data) {
+				if(data) retData = {
+					status: true,
+					data: data
+				};
+
+				return res.json(retData);
+			});
 	}
 };
 
 exports.remove = {
 
 	path: '/:id/remove',
-	method: 'delete',
+	method: 'delete|get',
 
 	handler: function(req, res)
 	{
-		return res.json({});
+		var retData = {
+			status: false
+		};
+
+		db.models.Projects.forge({ id: req.params.id })
+			.fetch()
+			.then(function(project) {
+				if(project)
+				{
+					project.destroy();
+					retData.status = true;
+				}
+
+				return res.json(retData);
+			});
 	}
 };
+
+exports.build = {
+
+	path: '/:id/build',
+	method: 'get',
+
+	handler: function(req, res)
+	{
+		var retData = {
+			status: false
+		};
+
+		return res.json(retData);
+	}
+}
