@@ -8,20 +8,31 @@ var db = {
 };
 
 db.models = {
-    Projects: db.cnx.Model.extend({
+    Project: db.cnx.Model.extend({
         tableName: 'projects'
+    }),
+
+    Task: db.cnx.Model.extend({
+        tableName: 'tasks'
+    }),
+
+    Build: db.cnx.Model.extend({
+        tableName: 'builds'
+    })
+};
+
+db.collections = {
+    Projects: db.cnx.Collection.extend({
+        model: db.models.Project
+    }),
+
+    Tasks: db.cnx.Collection.extend({
+        model: db.models.Task
+    }),
+
+    Builds: db.cnx.Collection.extend({
+        model: db.models.Build
     })
 };
 
 module.exports = db;
-/*
-module.exports = {
-
-    cnx: Bookshelf(knex),
-
-    models: {
-        Projects: this.cnx.Model.extend({
-            tableName: 'projects'
-        })
-    }
-};*/
