@@ -1,5 +1,6 @@
 var db = require('../db.js');
 var _ = require('lodash');
+var Build = require('../lib/build.js');
 
 exports.view = {
 
@@ -12,7 +13,7 @@ exports.view = {
 			status: false
 		};
 
-		db.models.Projects.forge({
+		db.models.Project.forge({
 			id: req.params.id
 		})
 			.fetch().then(function(data) {
@@ -39,7 +40,7 @@ exports.save = {
 
 		var modelData = _.merge(req.query, req.params);
 
-		db.models.Projects.forge(modelData)
+		db.models.Project.forge(modelData)
 			.save()
 			.then(function(data) {
 				if(data) retData = {
@@ -63,7 +64,7 @@ exports.remove = {
 			status: false
 		};
 
-		db.models.Projects.forge({ id: req.params.id })
+		db.models.Project.forge({ id: req.params.id })
 			.fetch()
 			.then(function(project) {
 				if(project)
@@ -88,6 +89,23 @@ exports.build = {
 			status: false
 		};
 
+		db.models.Project.forge({
+			id: req.params.id
+		})
+		.fetch().then(function(data) {
+			new Build(data)
+			.then(function(build) {
+				if(build)
+				{
+					build.start()
+					.then(function(status) {
+						console.log(status)
+						retData.status = status;
+					});
+				}
+			});
+		});
+
 		return res.json(retData);
 	}
-}
+};

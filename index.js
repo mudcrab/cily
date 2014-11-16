@@ -1,5 +1,9 @@
 var express = require('express');
 var app = express();
+var config = require('./config');
+
+// TODO move this somewhere better
+var Builder = require('./app/lib/builder');
 
 require('./app/routes')(app);
 
@@ -15,3 +19,6 @@ var server = app.listen(3000, function() {
 
 	console.log('http://%s:%s', host, port);
 });
+
+for(var i = 0; i < 5; i++)
+	config.builders.push(new Builder(i));
