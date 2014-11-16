@@ -20,6 +20,7 @@ gulp.task('reload', ['js'], function () {
 gulp.task('js', function() {
 	gulp.src([
 		'./index.js',
+		'./config.js',
 		'./app/**/*.js',
 	])
 	.pipe(jshint())
@@ -29,7 +30,7 @@ gulp.task('js', function() {
 gulp.task('watch', function () {
 	gulp.start('reload', function() {});
 
-	watch(['index.js', 'app/**/*.js'], function (files, cb) {
+	watch(['index.js', 'index.js', 'app/**/*.js'], function (files, cb) {
 		gulp.start('reload', cb);
 	});
 });

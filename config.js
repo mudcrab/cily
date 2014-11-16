@@ -1,3 +1,5 @@
+var appRoot = require('app-root-path');
+
 module.exports = {
     db: {
         server: 'localhost',
@@ -6,5 +8,9 @@ module.exports = {
         db: 'redoit',
         connection: null,
         models: {}
-    }
+    },
+    build: {
+    	dir: appRoot + '/builds/'
+    },
+    builders: []
 };
