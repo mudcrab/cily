@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/mudcrab/redoit",
   "dependencies": {
+    "app-root-path": "^1.0.0",
+    "bluebird": "^2.3.11",
     "bookshelf": "^0.7.9",
     "express": "^4.10.2",
+    "git-wrapper": "^0.1.1",
     "knex": "^0.7.3",
     "lodash": "^2.4.1",
     "minivents": "^1.1.6",
