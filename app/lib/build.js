@@ -67,38 +67,6 @@ Build.prototype.start = function()
 			});
 		});
 	});
-	/*db.models.Build.forge({
-		task_id: 1,
-		project_id: 1
-	})
-	.query(function())*/
-
-	/*db.models.Build.buildNr(1, 1)
-	.then(function(build) {
-		// console.log(build)
-	})*/
-	/*
-		0. create project dir in /builds/
-		1. get the prj (clone, fetch?)
-		2. cd to prj
-		3. run cmd
-	*/
-	/*helper.mkdirpSync('./builds/1');
-	db.models.Task.forge({ project_id: this.id })
-		.fetchAll()
-		.then(function(data) {
-
-		});*/
-};
-
-Build.prototype.fetchRepo = function()
-{
-	//
-};
-
-Build.prototype.cloneRepo = function()
-{
-	//
 };
 
 module.exports = Build;
