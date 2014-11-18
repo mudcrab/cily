@@ -13,7 +13,7 @@ app.use(function(req, res, next) {
 	next();
 });
 
-var server = app.listen(3000, function() {
+var server = app.listen(config.base.port, function() {
 	var host = server.address().address;
 	var port = server.address().port;
 

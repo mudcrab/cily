@@ -1,6 +1,9 @@
 var appRoot = require('app-root-path');
 
 module.exports = {
+    base: {
+        port: 3000,
+    },
     db: {
         server: 'localhost',
         username: 'redoit',
