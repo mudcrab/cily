@@ -5,11 +5,14 @@ var Promise_ = require('bluebird');
 var Moment = require('moment-timezone');
 var Git = require('git-wrapper');
 var exec = require('child_process').exec;
+var fs = require('fs');
 
 var Builder = function(id)
 {
 	this.id = id;
 	this.available = true;
+	this.projectName = '';
+	this.buildNr = '';
 
 	console.log('builder #%d ready', id);
 };
@@ -24,6 +27,9 @@ Builder.prototype.build = function(project, task, build)
 		})
 		.fetch()
 		.then(function(project) {
+			self.projectName = project.get('name');
+			self.buildNr = build.get('build_nr');
+
 			var repoLocation = './builds/' + project.get('name') + '/' + build.get('build_nr');
 			var git = new Git({
 				'git-dir': repoLocation + '/.git'
@@ -54,14 +60,28 @@ Builder.prototype.build = function(project, task, build)
 
 Builder.prototype.runCommands = function(path, commands)
 {
+	var self = this;
 	return new Promise_(function(resolve) {
 		var done = commands.length - 1;
 		commands.forEach(function(cmd, i) {
 			exec(cmd, { cwd: path }, function(error, stdout, stderr) {
+				self.saveLog(stdout);
+
 				if(i === done)
 					resolve();
 			});
 		});
+	});
+};
+
+Builder.prototype.saveLog = function(msg)
+{
+	var self = this;
+	var logsLocation = './logs/' + this.projectName;
+	helper.mkdirpSync(logsLocation);
+
+	fs.appendFile(logsLocation + '/' + this.buildNr + '.log', msg, function (err) {
+		// log error
 	});
 };
 
