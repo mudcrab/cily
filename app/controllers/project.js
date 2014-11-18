@@ -99,7 +99,6 @@ exports.build = {
 				{
 					build.start()
 					.then(function(status) {
-						console.log(status)
 						retData.status = status;
 					});
 				}
@@ -107,5 +106,43 @@ exports.build = {
 		});
 
 		return res.json(retData);
+	}
+};
+
+exports.builds = {
+
+	path: '/:id/builds',
+	method: 'get',
+
+	handler: function(req, res)
+	{
+		db.collections.Builds.forge()
+		.query(function(qb) {
+			qb.where('project_id', '=', req.params.id)
+			.orderBy('build_nr', 'ASC');
+		})
+		.fetch()
+		.then(function(builds) {
+			res.json(builds.toJSON());
+		});
+	}
+};
+
+exports.last_build = {
+
+	path: '/:id/builds/last',
+	method: 'get',
+
+	handler: function(req, res)
+	{
+		db.models.Build.forge({ project_id: req.params.id })
+		.query(function(qb) {
+			qb.orderBy('build_nr', 'DESC')
+			.limit('1');
+		})
+		.fetch()
+		.then(function(build) {
+			res.json(build.toJSON());
+		});
 	}
 };
