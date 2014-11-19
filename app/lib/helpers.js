@@ -23,7 +23,15 @@ exports.getBuilder = function()
 {
 	for(var i = 0; i < config.builders.length; i++)
 	{
-		if(config.builders[i].available)
+		if(config.builders[i].status === 'available')
 			return config.builders[i];
 	}
+};
+
+exports.socketData = function(type, data)
+{
+	return JSON.stringify({
+		type: type,
+		data: data || {}
+	});
 };

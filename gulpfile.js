@@ -20,6 +20,7 @@ gulp.task('reload', ['js'], function () {
 gulp.task('js', function() {
 	gulp.src([
 		'./index.js',
+		'./builder.js',
 		'./config.js',
 		'./app/**/*.js',
 	])
@@ -30,7 +31,7 @@ gulp.task('js', function() {
 gulp.task('watch', function () {
 	gulp.start('reload', function() {});
 
-	watch(['index.js', 'index.js', 'app/**/*.js'], function (files, cb) {
+	watch(['index.js', 'index.js', 'config.js', 'builder.js', 'app/**/*.js'], function (files, cb) {
 		gulp.start('reload', cb);
 	});
 });
