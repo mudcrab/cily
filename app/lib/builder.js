@@ -39,15 +39,15 @@ Builder.prototype.build = function(project, task, build)
 				if(e === null)
 				{
 					self.runCommands(repoLocation, task.get('cmd').split('\n'))
-					.then(function() {
+					.then(function(buildStatus) {
 						git.exec('rev-parse --verify HEAD', function(gitHashErr, gitHash) {
 							build
 							.save({
-								status: true,
+								status: buildStatus,
 								end_time: Moment.tz("Europe/Tallinn").format("YYYY-MM-DD HH:MM:ss"),
 								commit: gitHash
 							}, { method: 'update' });
-							resolve(true);
+							resolve(buildStatus);
 						});
 					});
 				}
@@ -67,8 +67,15 @@ Builder.prototype.runCommands = function(path, commands)
 			exec(cmd, { cwd: path }, function(error, stdout, stderr) {
 				self.saveLog(stdout);
 
-				if(i === done)
-					resolve();
+				if(error)
+				{
+					resolve(false);
+				}
+				else
+				{
+					if(i === done)
+						resolve(true);
+				}
 			});
 		});
 	});
