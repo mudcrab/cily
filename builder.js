@@ -49,8 +49,8 @@ Builder.prototype.build = function(project, task, build)
 {
 	var self = this;
 
-	var projectName = project.name;
-	var buildNr = build.build_nr;
+	this.projectName = project.name;
+	this.buildNr = build.build_nr;
 
 	var repoLocation = './builds/' + project.name + '/' + build.build_nr;
 

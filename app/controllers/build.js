@@ -27,7 +27,6 @@ exports.getBuild = {
 					fs.readFile('./logs/' + project.get('name') + '/' + build.get('build_nr') + '.log', {
 						encoding: 'utf8'
 					}, function(err, file) {
-
 						if(!err)
 						{
 							retData = {
