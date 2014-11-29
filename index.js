@@ -1,9 +1,16 @@
 var express = require('express');
 var app = express();
 var config = require('./config');
+var WebSocketServer = require('ws').Server;
+var Events = require('minivents');
+var helper = require('./app/lib/helpers');
+var wsBuilder = require('./builder');
+
+config.events = new Events();
+config.builderServer = new WebSocketServer({ port: 1337 });
 
 // TODO move this somewhere better
-var Builder = require('./app/lib/builder');
+var Builder = require('./app/lib/builderclient');
 
 require('./app/routes')(app);
 
@@ -20,5 +27,25 @@ var server = app.listen(config.base.port, function() {
 	console.log('http://%s:%s', host, port);
 });
 
-for(var i = 0; i < 5; i++)
-	config.builders.push(new Builder(i));
+config.builderServer.on('connection', function(builder) {
+	builder.on('message', function(json) {
+		var msg = JSON.parse(json);
+
+		if(msg.type == 'addBuilder')
+		{
+			// init builder
+			config.builders.push(new Builder(builder));
+		}
+		else
+		{
+			// console.log(json)
+		}
+		// builder.removeAllListeners('message');
+	});
+
+	builder.on('close', function() {
+		// 
+	});
+});
+
+// var bldr = wsBuilder();
