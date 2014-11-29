@@ -6,14 +6,15 @@ var appRoot = require('app-root-path');
 var helper = require('./app/lib/helpers.js');
 var Promise_ = require('bluebird');
 var Moment = require('moment-timezone');
-var Git = require('git-wrapper');
 var exec = require('child_process').exec;
 var fs = require('fs');
+var clone = require('nodegit').Clone.clone;
 
 var Builder = function()
 {
 	this.status = 'available';
 	this.initSocket();
+	console.log('Builder online');
 };
 
 Builder.prototype.initSocket = function()
@@ -52,27 +53,24 @@ Builder.prototype.build = function(project, task, build)
 	var buildNr = build.build_nr;
 
 	var repoLocation = './builds/' + project.name + '/' + build.build_nr;
-	var git = new Git({
-		'git-dir': repoLocation + '/.git'
-	});
 
-	git.exec('clone', [project.repo_address, repoLocation], function(e, o) {
-		if(e === null)
-		{
-			self.runCommands(repoLocation, task.cmd.split('\n'))
-			.then(function(buildStatus) {
-				git.exec('rev-parse --verify HEAD', function(gitHashErr, gitHash) {
-					var retData = {
-						status: buildStatus,
-						end_time: Moment.tz("Europe/Tallinn").format("YYYY-MM-DD HH:MM:ss"),
-						commit: gitHash
-					};
-					ws.send(helpers.socketData('buildComplete', retData));
-				});
-			});
-		}
-		else
-			ws.send(helpers.socketData('vcsError', null));
+	clone(project.repo_address, repoLocation, null)
+	.then(function(repo) {
+		return repo.getBranchCommit('master');
+	})
+	.then(function(commit) {
+		self.runCommands(repoLocation, task.cmd.split('\n'))
+		.then(function(buildStatus) {
+			var retData = {
+				status: buildStatus,
+				end_time: Moment.tz("Europe/Tallinn").format("YYYY-MM-DD HH:MM:ss"),
+				commit: commit.sha()
+			};
+			ws.send(helpers.socketData('buildComplete', retData));
+		});
+	})
+	.catch(function(err) {
+		ws.send(helpers.socketData('vcsError', null));
 	});
 };
 
