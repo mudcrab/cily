@@ -28,7 +28,8 @@
     "moment-timezone": "^0.2.4",
     "mysql": "^2.5.3",
     "nodegit": "^0.2.3",
-    "ws": "^0.4.32"
+    "ws": "^0.4.32",
+    "cily-builder-node": "mudcrab/cily-builder-node"
   },
   "devDependencies": {
     "gulp": "^3.8.10",

@@ -4,7 +4,7 @@ var config = require('./config');
 var WebSocketServer = require('ws').Server;
 var Events = require('minivents');
 var helper = require('./app/lib/helpers');
-var wsBuilder = require('./builder');
+var wsBuilder = require('cily-builder-node');
 
 config.events = new Events();
 config.builderServer = new WebSocketServer({ port: 1337 });
