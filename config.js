@@ -17,28 +17,5 @@ module.exports = {
 		models: {}
 	},
 
-	build: {
-		dir: appRoot + '/builds/'
-	},
-
 	builders: [],
-
-	/*builders_: [
-		{
-			db: {
-				server: 'localhost',
-				username: 'redoit',
-				password: 'redoit',
-				db: 'redoit',
-			}
-		},
-		{
-			db: {
-				server: 'localhost',
-				username: 'redoit',
-				password: 'redoit',
-				db: 'redoit',
-			}
-		}
-	]*/
 };

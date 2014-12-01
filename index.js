@@ -1,30 +1,17 @@
-var homeDir = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
-homeDir += '/.cily';
+var cily = require('./app/lib/helpers');
+var config = cily.config;
 
 var express = require('express');
 var app = express();
-try 
-{
-	var config = require(homeDir + '/cily');
-}
-catch(e)
-{
-	console.log('Config file at %s/cily.js not found, using the default.', homeDir);
-	var config = require('./config');
-}
 var WebSocketServer = require('ws').Server;
 var Events = require('minivents');
-var helper = require('./app/lib/helpers');
-var wsBuilder = require('cily-builder-node');
+var Builder = require('./app/lib/builderclient');
 
 config.events = new Events();
 config.builderServer = new WebSocketServer({ port: 1337 });
 
-config.logs = config.logs || homeDir + '/logs/';
-config.builds = config.builds || '/builds/';
-
-// TODO move this somewhere better
-var Builder = require('./app/lib/builderclient');
+config.logs = config.logs || cily.appDir + '/logs/';
+config.builds = config.builds || cily.appDir + '/builds/';
 
 require('./app/routes')(app);
 
@@ -47,20 +34,18 @@ config.builderServer.on('connection', function(builder) {
 
 		if(msg.type == 'addBuilder')
 		{
-			// init builder
-			config.builders.push(new Builder(builder));
+			try
+			{
+				if(config.token === msg.data.token)
+					config.builders.push(new Builder(builder));
+				else
+					console.log('Wrong access token');
+			}
+			catch(e) {}
 		}
-		else
-		{
-			// console.log(json)
-		}
-		// builder.removeAllListeners('message');
 	});
 
 	builder.on('close', function() {
-		// 
+		cily.removeBuilder(builder);
 	});
 });
-
-// var bldr = wsBuilder();
-
