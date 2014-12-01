@@ -1,6 +1,17 @@
+var homeDir = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
+homeDir += '/.cily';
+
 var express = require('express');
 var app = express();
-var config = require('./config');
+try 
+{
+	var config = require(homeDir + '/cily');
+}
+catch(e)
+{
+	console.log('Config file at %s/cily.js not found, using the default.', homeDir);
+	var config = require('./config');
+}
 var WebSocketServer = require('ws').Server;
 var Events = require('minivents');
 var helper = require('./app/lib/helpers');
@@ -8,6 +19,9 @@ var wsBuilder = require('cily-builder-node');
 
 config.events = new Events();
 config.builderServer = new WebSocketServer({ port: 1337 });
+
+config.logs = config.logs || homeDir + '/logs/';
+config.builds = config.builds || '/builds/';
 
 // TODO move this somewhere better
 var Builder = require('./app/lib/builderclient');
@@ -49,3 +63,4 @@ config.builderServer.on('connection', function(builder) {
 });
 
 // var bldr = wsBuilder();
+
