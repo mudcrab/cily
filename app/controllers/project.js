@@ -80,32 +80,39 @@ exports.remove = {
 
 exports.build = {
 
-	path: '/:id/build',
+	path: '/:id/:token/build',
 	method: 'get',
 
 	handler: function(req, res)
 	{
 		var retData = {
-			status: false
+			status: true
 		};
 
 		db.models.Project.forge({
 			id: req.params.id
 		})
 		.fetch().then(function(data) {
-			new Build(data)
-			.then(function(build) {
-				if(build)
-				{
-					build.start()
-					.then(function(status) {
-						retData.status = status;
-					});
-				}
-			});
-		});
 
-		return res.json(retData);
+			if(data.get('token') === req.params.token)
+			{
+				new Build(data)
+				.then(function(build) {
+					if(build)
+					{
+						build.start()
+						.then(function(status) {
+							return res.json(status);
+						});
+					}
+				});
+			}
+			else
+			{
+				retData.status = false;
+				return res.json(retData);
+			}
+		});
 	}
 };
 
