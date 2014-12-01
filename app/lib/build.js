@@ -37,7 +37,10 @@ var Build = function(project) {
 				.fetch()
 				.then(function(build) {
 					if(build)
+					{
+						self.build = build;
 						self.id = parseInt(build.get('build_nr')) + 1;
+					}
 					resolve(self);
 				});
 			}
@@ -61,10 +64,19 @@ Build.prototype.start = function()
 		.save()
 		.then(function(build) {
 			var builder = helper.getBuilder();
-			builder.build(self.project, self.task, build)
-			.then(function(status) {
-				resolve(status);
-			});
+			
+			if(typeof builder === 'undefined')
+				resolve({ status: false });
+			else
+			{
+				builder.build(self.project, self.task, build)
+				.then(function(status) {
+					resolve({
+						status: status,
+						id: self.build.get('id')
+					});
+				});
+			}
 		});
 	});
 };
