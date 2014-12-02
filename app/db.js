@@ -18,6 +18,10 @@ db.models = {
 
     Build: db.cnx.Model.extend({
         tableName: 'builds'
+    }),
+
+    User: db.cnx.Model.extend({
+        tableName: 'users'
     })
 };
 
@@ -32,6 +36,10 @@ db.collections = {
 
     Builds: db.cnx.Collection.extend({
         model: db.models.Build
+    }),
+
+    Users: db.cnx.Collection.extend({
+        model: db.models.User
     })
 };
 
