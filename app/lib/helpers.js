@@ -3,6 +3,9 @@ homeDir += '/.cily';
 var fs = require('fs');
 var path = require('path');
 var config = getConfig();
+var bcrypt = require('bcryptjs');
+var db = require('../db');
+var Promise_ = require('bluebird');
 
 function getConfig()
 {
@@ -61,6 +64,52 @@ exports.socketData = function(type, data)
 		type: type,
 		data: data || {}
 	});
+};
+
+exports.createUser = function(email, password)
+{
+	var salt = bcrypt.genSaltSync(10);
+	var hash = bcrypt.hashSync(password, salt);
+
+	db.models.User.forge({
+		email: email,
+		pw: hash
+	})
+	.save();
+};
+
+exports.authUser = function(email, password, cb)
+{
+	return new Promise_(function(resolve) {
+		db.models.User.forge({
+			email: email
+		})
+		.fetch()
+		.then(function(user) {
+			if(user)
+			{
+				var status = bcrypt.compareSync(password, user.get('pw'));
+
+				resolve(status);
+				if(typeof cb !== 'undefined') cb(status);
+			}
+			else
+			{
+				resolve(false);
+				if(typeof cb !== 'undefined') cb(false);
+			}
+		});
+	});
+};
+
+exports.checkUserToken = function(token)
+{
+	// 
+};
+
+exports.addUserProject = function(uid, pid)
+{
+	// 
 };
 
 exports.getConfig = getConfig;
