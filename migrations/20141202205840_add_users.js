@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
 	return Promise.all([
 		knex.schema.createTable('users', function(table) {
 			table.increments('id').primary().unsigned();
-			table.string('email', 255);
+			table.string('email', 255).unique();
 			table.string('pw', 60);
 			table.string('token', 60);
 		}),
