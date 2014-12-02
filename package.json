@@ -18,8 +18,10 @@
   "homepage": "https://github.com/mudcrab/redoit",
   "dependencies": {
     "app-root-path": "^1.0.0",
+    "bcryptjs": "^2.1.0",
     "bluebird": "^2.3.11",
     "bookshelf": "^0.7.9",
+    "cily-builder-node": "mudcrab/cily-builder-node",
     "express": "^4.10.2",
     "git-wrapper": "^0.1.1",
     "knex": "^0.7.3",
@@ -28,8 +30,7 @@
     "moment-timezone": "^0.2.4",
     "mysql": "^2.5.3",
     "nodegit": "^0.2.3",
-    "ws": "^0.4.32",
-    "cily-builder-node": "mudcrab/cily-builder-node"
+    "ws": "^0.4.32"
   },
   "devDependencies": {
     "gulp": "^3.8.10",
