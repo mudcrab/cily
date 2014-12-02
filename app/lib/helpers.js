@@ -104,12 +104,18 @@ exports.authUser = function(email, password, cb)
 
 exports.checkUserToken = function(token)
 {
-	// 
+	return new Pormise_(function(resolve) {
+		db.models.User.forge({ token: token })
+		.then(function(user) {
+			resolve(user);	
+		});
+	});
 };
 
 exports.addUserProject = function(uid, pid)
 {
-	// 
+	db.models.UserProject({ user_id: uid, project_id: pid })
+	.save();
 };
 
 exports.getConfig = getConfig;
