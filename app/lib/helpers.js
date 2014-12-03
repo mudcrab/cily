@@ -102,13 +102,12 @@ exports.authUser = function(email, password, cb)
 	});
 };
 
-exports.checkUserToken = function(token)
+exports.checkUserToken = function(uid, token, response)
 {
-	return new Pormise_(function(resolve) {
-		db.models.User.forge({ token: token })
-		.then(function(user) {
-			resolve(user);	
-		});
+	return new Promise_(function(resolve) {
+		db.models.User.forge({ id: uid, token: token })
+		.fetch()
+		.then(resolve);
 	});
 };
 

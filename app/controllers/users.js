@@ -1,6 +1,6 @@
 var db = require('../db.js');
 var _ = require('lodash');
-var Build = require('../lib/build.js');
+var cily = require('../lib/helpers');
 
 exports.view = {
 
@@ -13,22 +13,33 @@ exports.view = {
 			status: false
 		};
 
-		db.models.User.forge({
-			id: req.params.id
-		})
-		.fetch({
-			columns: [
-				'id',
-				'email',
-				'token'
-			]
-		})
-		.then(function(data) {
-			if(data) retData = {
-				status: true,
-				data: data.toJSON()
-			};
+		var headerToken = req.get('X-Cily-Token') || null;
 
+		cily.checkUserToken(req.params.id, headerToken, res)
+		.then(function(user) {
+			if(!user) throw new Error();
+			return user;
+		})
+		.then(function(user) {
+			db.models.User.forge({
+				id: req.params.id
+			})
+			.fetch({
+				columns: [
+					'id',
+					'email',
+					'token'
+				]
+			})
+			.then(function(data) {
+				if(data) retData = {
+					status: true,
+					data: data.toJSON()
+				};
+				return res.json(retData);
+			});
+		})
+		.catch(function(e) {
 			return res.json(retData);
 		});
 	}
