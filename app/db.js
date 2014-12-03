@@ -21,11 +21,16 @@ db.models = {
     }),
 
     User: db.cnx.Model.extend({
-        tableName: 'users'
+        tableName: 'users',
+
+        projects: function()
+        {
+            return this.hasMany(db.models.UserProject);
+        }
     }),
 
     UserProject: db.cnx.Model.extend({
-        tableName: 'users_projects'
+        tableName: 'user_projects'
     })
 };
 
