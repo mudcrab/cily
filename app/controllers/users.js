@@ -48,7 +48,7 @@ exports.view = {
 exports.save = {
 
 	path: '/users/:id/save',
-	method: 'post|patch|get',
+	method: 'post|patch',
 
 	handler: function(req, res)
 	{
@@ -56,17 +56,26 @@ exports.save = {
 			status: false
 		};
 
-		var modelData = _.merge(req.query, req.params);
+		var headerToken = req.get('X-Cily-Token') || null;
 
-		db.models.User.forge(modelData)
-		.save()
-		.then(function(data) {
-			if(data) retData = {
-				status: true,
-				data: data
-			};
+		cily.checkUserToken(req.params.id, headerToken, res)
+		.then(function(user) {
+			if(!user) throw new Error();
+			return user;
+		})
+		.then(function(user) {
+			var modelData = _.merge(req.query, req.params);
 
-			return res.json(retData);
+			db.models.User.forge(modelData)
+			.save()
+			.then(function(data) {
+				if(data) retData = {
+					status: true,
+					data: data
+				};
+
+				return res.json(retData);
+			});
 		});
 	}
 };
@@ -74,7 +83,7 @@ exports.save = {
 exports.remove = {
 
 	path: '/users/:id/remove',
-	method: 'delete|get',
+	method: 'delete',
 
 	handler: function(req, res)
 	{
@@ -82,16 +91,25 @@ exports.remove = {
 			status: false
 		};
 
-		db.models.User.forge({ id: req.params.id })
-		.fetch()
-		.then(function(user) {
-			if(user)
-			{
-				user.destroy();
-				retData.status = true;
-			}
+		var headerToken = req.get('X-Cily-Token') || null;
 
-			return res.json(retData);
+		cily.checkUserToken(req.params.id, headerToken, res)
+		.then(function(user) {
+			if(!user) throw new Error();
+			return user;
+		})
+		.then(function(user) {
+			db.models.User.forge({ id: req.params.id })
+			.fetch()
+			.then(function(user) {
+				if(user)
+				{
+					user.destroy();
+					retData.status = true;
+				}
+
+				return res.json(retData);
+			});
 		});
 	}
 };
@@ -107,34 +125,43 @@ exports.getProjects = {
 			status: false
 		};
 
-		db.models.User.forge({ id: req.params.id })
-		.fetch({
-			columns: [
-				'id',
-				'email',
-				'token'
-			],
-			withRelated: ['projects']
+		var headerToken = req.get('X-Cily-Token') || null;
+
+		cily.checkUserToken(req.params.id, headerToken, res)
+		.then(function(user) {
+			if(!user) throw new Error();
+			return user;
 		})
 		.then(function(user) {
-			if(user)
-			{
-				var projects = [];
+			db.models.User.forge({ id: req.params.id })
+			.fetch({
+				columns: [
+					'id',
+					'email',
+					'token'
+				],
+				withRelated: ['projects']
+			})
+			.then(function(user) {
+				if(user)
+				{
+					var projects = [];
 
-				user.related('projects').each(function(project) {
-					projects.push({
-						id: project.get('id'),
-						pid: project.get('project_id')
+					user.related('projects').each(function(project) {
+						projects.push({
+							id: project.get('id'),
+							pid: project.get('project_id')
+						});
 					});
-				});
 
-				retData = {
-					status: true,
-					data: projects
-				};
-			}
+					retData = {
+						status: true,
+						data: projects
+					};
+				}
 
-			return res.json(retData);
+				return res.json(retData);
+			});
 		});
 	}
 
