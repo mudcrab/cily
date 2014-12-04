@@ -120,6 +120,7 @@ exports.builds = {
 
 	path: '/:id/builds',
 	method: 'get',
+	auth: false,
 
 	handler: function(req, res)
 	{
