@@ -90,7 +90,11 @@ exports.authUser = function(email, password, cb)
 			{
 				var status = bcrypt.compareSync(password, user.get('pw'));
 
-				resolve(status);
+				if(status)
+					resolve({ status: status, token: user.get('token') });
+				else
+					resolve({ status: false });
+
 				if(typeof cb !== 'undefined') cb(status);
 			}
 			else

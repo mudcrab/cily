@@ -13,13 +13,13 @@ config.builderServer = new WebSocketServer({ port: 1337 });
 config.logs = config.logs || cily.appDir + '/logs/';
 config.builds = config.builds || cily.appDir + '/builds/';
 
-require('./app/routes')(app);
-
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
+
+require('./app/routes')(app);
 
 var server = app.listen(config.base.port, function() {
 	var host = server.address().address;

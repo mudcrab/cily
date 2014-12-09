@@ -1,74 +1,48 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var fs = require('fs');
 var cily = require('./lib/helpers');
 
-var authorize = function(req, res, next)
+var Build = require('./controllers/build');
+var Project = require('./controllers/project');
+var Users = require('./controllers/users');
+
+module.exports = function(app)
 {
-	var path = req.originalUrl.substring(1).split('/');
+	app.use(bodyParser.urlencoded({ extended: false }));
+	app.use(bodyParser.json());
 
-	try
-	{
-		var route = require(__dirname + '/controllers/' + path[0])[path[path.length - 1]];
-
-		if(typeof route.auth !== 'undefined' && !route.auth)
-		{
-			console.log('noauth')
-			next();
-		}
-	}
-	catch(e)
-	{
-
-	}
-
-	var headerToken = req.get('X-Cily-Token') || null;
-	cily.checkUserToken(1, 'asdf1234', res)
-	.then(function(user) {
-		if(!user) throw new Error();
-		return user;
-	})
-	.then(function(user) {
+	app.use(function(req, res, next) {
+		console.log(req.method, req.originalUrl);
 		next();
-	})
-	.catch(function(e) {
-		return res.json(retData);
 	});
-};
 
-module.exports = function(parent, options)
-{
-	parent.use(authorize);
-	fs.readdirSync(__dirname + '/controllers').forEach(function(name) {
-		var ctrl = require(__dirname + '/controllers/' + name);
-		name = ctrl.name || name;
-		var prefix = ctrl.prefix || '';
-		var app = express();
-		var handler;
-		var method;
-		var path;
+	/*
+		Controllers.Users
+	*/
 
-		for(var fn in ctrl)
-		{
-			if(ctrl.hasOwnProperty(fn))
-			{
-				path = prefix + ctrl[fn].path;
-				handler = ctrl[fn].handler;
-				method = ctrl[fn].method;
+	app.post('/users/auth', Users.auth);
+	app.get('/users/:id', Users.view);
+	app.post('/users/:id/save', Users.save);
+	app.put('/users/:id/save', Users.save);
+	app.delete('/users/:id/remove', Users.remove);
+	app.get('/users/:id/projects', Users.projects);
 
-				if(method.indexOf('|') >= 0)
-				{
-					method.split('|').forEach(setRoute);
-				}
-				else
-					app[method](path, handler);
-			}
-		}
+	/*
+		Controllers.Projects
+	*/
 
-		function setRoute(_method)
-		{
-			app[_method](path, handler);
-		}
+	app.get('/projects/:id', Project.view);
+	app.get('/projects/:id/builds', Project.builds);
+	app.get('/projects/:id/last', Project.lastBuild);
+	app.post('/projects/:id/save', Project.save);
+	app.put('/projects/:id/save', Project.save);
+	app.delete('/projects/:id/remove', Project.remove);
+	app.get('/projects/:id/:token/build', Project.build);
 
-		parent.use(app);
-	});
+	/*
+		Controllers.Build
+	*/
+
+	app.get('/build/:id/:project', Build.getBuild);
 };

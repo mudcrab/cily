@@ -20,6 +20,7 @@
     "app-root-path": "^1.0.0",
     "bcryptjs": "^2.1.0",
     "bluebird": "^2.3.11",
+    "body-parser": "^1.10.0",
     "bookshelf": "^0.7.9",
     "cily-builder-node": "mudcrab/cily-builder-node",
     "express": "^4.10.2",
