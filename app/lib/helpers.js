@@ -91,7 +91,7 @@ exports.authUser = function(email, password, cb)
 				var status = bcrypt.compareSync(password, user.get('pw'));
 
 				if(status)
-					resolve({ status: status, token: user.get('token') });
+					resolve({ status: status, token: user.get('token'), id: user.get('id') });
 				else
 					resolve({ status: false });
 
@@ -106,12 +106,14 @@ exports.authUser = function(email, password, cb)
 	});
 };
 
-exports.checkUserToken = function(uid, token, response)
+exports.checkUserToken = function(uid, token)
 {
 	return new Promise_(function(resolve) {
 		db.models.User.forge({ id: uid, token: token })
 		.fetch()
-		.then(resolve);
+		.then(function(data) {
+			resolve(data);
+		});
 	});
 };
 

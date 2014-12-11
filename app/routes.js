@@ -13,8 +13,24 @@ module.exports = function(app)
 	app.use(bodyParser.json());
 
 	app.use(function(req, res, next) {
-		console.log(req.method, req.originalUrl);
-		next();
+		var noAuth = {
+			'/users/auth': true,
+		};
+
+		if(noAuth[req.path] || req.method === 'OPTIONS')
+		{
+			next();
+		}
+		else
+		{
+			cily.checkUserToken(req.headers['x-cily-uid'], req.headers['x-cily-token'])
+			.then(function(data) {
+				if(data)
+					next();
+				else
+					res.status(401).end();
+			});
+		}
 	});
 
 	/*
