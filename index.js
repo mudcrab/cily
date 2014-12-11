@@ -13,9 +13,18 @@ config.builderServer = new WebSocketServer({ port: 1337 });
 config.logs = config.logs || cily.appDir + '/logs/';
 config.builds = config.builds || cily.appDir + '/builds/';
 
+var acceptedHeaders = [
+	'Origin',
+	'X-Requested-With',
+	'Content-Type',
+	'Accept',
+	'X-Cily-Token',
+	'X-Cily-UID'
+];
+
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.header("Access-Control-Allow-Headers", acceptedHeaders.join(', '));
 	next();
 });
 
