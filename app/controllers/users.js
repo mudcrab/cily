@@ -115,18 +115,23 @@ exports.projects = function(req, res)
 			var projects = [];
 
 			user.related('projects').each(function(project) {
-				projects.push({
-					id: project.get('id'),
-					pid: project.get('project_id')
+				db.collections.Projects.forge()
+				.query(function(qb) {
+					qb.where('id', '=', project.get('project_id'));
+				})
+				.fetch()
+				.then(function(data) {
+					if(data)
+					{
+						retData = {
+							status: true,
+							data: data.toJSON()
+						};
+					}
+					return res.json(retData);
 				});
+
 			});
-
-			retData = {
-				status: true,
-				data: projects
-			};
 		}
-
-		return res.json(retData);
 	});
 };
