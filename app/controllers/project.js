@@ -70,7 +70,6 @@ exports.build = function(req, res)
 		id: req.params.id
 	})
 	.fetch().then(function(data) {
-
 		if(data.get('token') === req.params.token)
 		{
 			new Build(data)
@@ -101,7 +100,10 @@ exports.builds = function(req, res)
 	})
 	.fetch()
 	.then(function(builds) {
-		res.json(builds.toJSON());
+		res.json({
+			status: true,
+			data: builds.toJSON()
+		});
 	});
 };
 
