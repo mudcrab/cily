@@ -19,6 +19,7 @@ exports.getBuild = function(req, res)
 		{
 			db.models.Project.forge({ id: req.params.project }).fetch()
 			.then(function(project) {
+				// FIXME
 				fs.readFile('./logs/' + project.get('name') + '/' + build.get('build_nr') + '.log', {
 					encoding: 'utf8'
 				}, function(err, file) {

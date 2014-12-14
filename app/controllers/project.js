@@ -96,7 +96,7 @@ exports.builds = function(req, res)
 	db.collections.Builds.forge()
 	.query(function(qb) {
 		qb.where('project_id', '=', req.params.id)
-		.orderBy('build_nr', 'ASC');
+		.orderBy('build_nr', 'DESC');
 	})
 	.fetch()
 	.then(function(builds) {

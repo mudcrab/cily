@@ -73,6 +73,9 @@ Builder.prototype.finishBuild = function(data)
 {
 	var self = this;
 
+	data.author = '';
+	data.committer = '';
+
 	db.models.Build.forge({ id: self.tempBuildData.build.id })
 	.save(data, { method: 'update' });
 };
