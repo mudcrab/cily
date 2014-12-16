@@ -25,6 +25,7 @@ var acceptedHeaders = [
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", acceptedHeaders.join(', '));
+	res.header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS, DELETE");
 	next();
 });
 
