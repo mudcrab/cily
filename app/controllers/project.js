@@ -27,10 +27,8 @@ exports.save = function(req, res)
 		status: false
 	};
 
-	var modelData = _.merge(req.query, req.params);
-
-	db.models.Project.forge(modelData)
-	.save()
+	db.models.Project.forge({ id: req.body.id })
+	.save(req.body)
 	.then(function(data) {
 		if(data) retData = {
 			status: true,
@@ -118,4 +116,14 @@ exports.lastBuild = function(req, res)
 	.then(function(build) {
 		res.json(build.toJSON());
 	});
+};
+
+exports.getSettings = function(req, res)
+{
+	// 
+};
+
+exports.saveSettings = function(req, res)
+{
+	// 
 };
