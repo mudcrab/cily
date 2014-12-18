@@ -27,13 +27,28 @@ exports.save = function(req, res)
 		status: false
 	};
 
-	db.models.Project.forge({ id: req.body.id })
+	var modelData = {};
+
+	if(typeof req.body.id !== 'undefined')
+		modelData = { id: req.body.id };
+
+	db.models.Project.forge(modelData)
 	.save(req.body)
 	.then(function(data) {
 		if(data) retData = {
 			status: true,
 			data: data
 		};
+
+		// FIXME
+
+		if(typeof req.body.id === 'undefined')
+		{
+			db.models.UserProject.forge({
+				user_id: req.headers['x-cily-uid'],
+				project_id: data.get('id')
+			}).save();
+		}
 
 		return res.json(retData);
 	});

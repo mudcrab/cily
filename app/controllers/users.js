@@ -99,39 +99,31 @@ exports.projects = function(req, res)
 		status: false
 	};
 
-	
-	db.models.User.forge({ id: req.params.id })
+	db.models.User.forge({ id: req.headers['x-cily-uid'] })
 	.fetch({
 		columns: [
-		'id',
-		'email',
-		'token'
+		'id'
 		],
 		withRelated: ['projects']
 	})
 	.then(function(user) {
-		if(user)
-		{
-			var projects = [];
+		var projectsIds = [];
 
-			user.related('projects').each(function(project) {
-				db.collections.Projects.forge()
-				.query(function(qb) {
-					qb.where('id', '=', project.get('project_id'));
-				})
-				.fetch()
-				.then(function(data) {
-					if(data)
-					{
-						retData = {
-							status: true,
-							data: data.toJSON()
-						};
-					}
-					return res.json(retData);
-				});
+		user.related('projects').each(function(project) {
+			projectsIds.push({ id: project.get('project_id') });
+		});
 
-			});
-		}
+		new db.collections.Projects(projectsIds)
+		.fetch()
+		.then(function(projects) {
+			if(projects)
+			{
+			retData = {
+					status: true,
+					data: projects.toJSON()
+				};
+			}
+			return res.json(retData);
+		});
 	});
 };
