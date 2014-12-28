@@ -49,7 +49,10 @@ config.builderServer.on('connection', function(builder) {
 				if(config.token === msg.data.token)
 					config.builders.push(new Builder(builder));
 				else
-					console.log('Wrong access token');
+				{
+					builder.send(cily.socketData('tokenError', null));
+					builder.close();
+				}
 			}
 			catch(e) {}
 		}
