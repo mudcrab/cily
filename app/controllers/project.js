@@ -1,6 +1,8 @@
 var db = require('../db.js');
 var _ = require('lodash');
 var Build = require('../lib/build.js');
+var bcrypt = require('bcryptjs');
+var crypto = require('crypto');
 
 exports.view = function(req, res)
 {
@@ -32,6 +34,8 @@ exports.save = function(req, res)
 	if(typeof req.body.id !== 'undefined')
 		modelData = { id: req.body.id };
 
+	if(req.body.token) delete req.body.token;
+
 	db.models.Project.forge(modelData)
 	.save(req.body)
 	.then(function(data) {
@@ -48,6 +52,35 @@ exports.save = function(req, res)
 				user_id: req.headers['x-cily-uid'],
 				project_id: data.get('id')
 			}).save();
+		}
+
+		return res.json(retData);
+	});
+};
+
+exports.generateToken = function(req, res)
+{
+	var retData = {
+		status: false
+	};
+
+	db.models.Project.forge({
+		id: req.params.id
+	})
+	.fetch()
+	.then(function(data) {
+		if(data)
+		{
+			var salt = bcrypt.genSaltSync(10);
+			var hash = bcrypt.hashSync(Math.random() * 1000 + new Date(), salt);
+			var shasum = crypto.createHash('sha256').update(hash);
+
+			data.set('token', shasum.digest('hex'));
+			data.save();
+
+			retData = {
+				status: true
+			};
 		}
 
 		return res.json(retData);

@@ -53,6 +53,7 @@ module.exports = function(app)
 	app.put('/projects/:id', Project.save);
 	app.get('/project/:id/settings', Project.getSettings);
 	app.put('/project/:id/settings', Project.saveSettings);
+	app.post('/project/:id/maketoken', Project.generateToken);
 	app.get('/projects/:id/builds', Project.builds);
 	app.get('/projects/:id/last', Project.lastBuild);
 	app.delete('/projects/:id/remove', Project.remove);
